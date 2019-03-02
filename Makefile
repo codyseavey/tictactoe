@@ -33,5 +33,5 @@ stop: ## - Removes the container if it is running
 	@docker ps | grep belligerence/tictactoe | awk '{print $1}' | xargs docker rm -f 2> /dev/null || true
 
 .PHONY: publish
-publish: ## Pushes the image to docker registry
+publish: ## - Pushes the image to docker registry
 	@docker push $(DOCKER_REPO):latest
