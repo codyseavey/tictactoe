@@ -1,5 +1,6 @@
 DOCKER_REPO=belligerence/tictactoe
 APP_NAME=tictactoe
+GIT_REPO=github.com/codyseavey/tictactoe
 
 .PHONY: help
 help: ## - Displays help message
@@ -22,6 +23,12 @@ build-no-cache: ## - Docker build with no-cache setting
 run: ## - Run the container that was built
 	@docker run --name $(APP_NAME)-db -e POSTGRES_USER=$(APP_NAME) -e POSTGRES_PASSWORD=$(APP_NAME) -e POSTGRES_DB=$(APP_NAME) -d postgres
 	@docker run --name $(APP_NAME) -d -p 443:8443 --link $(APP_NAME)-db:postgres -v $(PWD)/certs:/certs $(DOCKER_REPO):latest
+
+.PHONY: test
+test: ## - Run tests for the application that was built
+	@docker run --name $(APP_NAME)-test-db -e POSTGRES_USER=$(APP_NAME) -e POSTGRES_PASSWORD=$(APP_NAME) -e POSTGRES_DB=$(APP_NAME) -d postgres &> /dev/null
+	@docker run --rm --link $(APP_NAME)-test-db:postgres -v $(GOPATH):/go -w /go/src/$(GIT_REPO) -e GOARCH=386 golang:alpine go test
+	@docker rm -f $(APP_NAME)-test-db &> /dev/null || true
 
 .PHONY: stop
 stop: ## - Removes the container if it is running
