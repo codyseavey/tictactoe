@@ -26,13 +26,11 @@ const (
 	OVar     = iota
 )
 
-// RDS info
 var (
-	dbhost = os.Getenv("DBHOST")
-	dbport = os.Getenv("DBPORT")
-	dbuser = os.Getenv("DBUSER")
-	dbpass = os.Getenv("DBPASS")
-	dbname = os.Getenv("DBNAME")
+	dbport = os.Getenv("POSTGRES_PORT_5432_TCP_PORT")
+	dbuser = os.Getenv("POSTGRES_ENV_POSTGRES_USER")
+	dbpass = os.Getenv("POSTGRES_ENV_POSTGRES_PASSWORD")
+	dbname = os.Getenv("POSTGRES_ENV_POSTGRES_DB")
 )
 
 var db *sql.DB
@@ -41,17 +39,31 @@ func initDb() *sql.DB {
 	var err error
 	db, err = sql.Open(
 		"postgres",
-		fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-			dbhost, dbport, dbuser, dbpass, dbname),
+		fmt.Sprintf("host=postgres port=%s user=%s password=%s dbname=%s sslmode=disable",
+			dbport, dbuser, dbpass, dbname),
 	)
 	if err != nil {
-		log.Fatal("Error: The data source arguments are not valid")
+		log.Fatalf("The data source arguments are not valid.")
 	}
-	err = db.Ping()
+
+	for i := 0; i < 10; i++ {
+		err = db.Ping()
+		if err != nil {
+			log.Printf("The database is not up yet")
+			if i == 9 {
+				panic(err)
+			}
+			time.Sleep(6 * time.Second)
+		} else {
+			break
+		}
+	}
+
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS tictactoe (id integer, board jsonb, winner integer, turn integer, players integer);")
 	if err != nil {
-		panic(err)
+		fmt.Println("Cannot create table")
 	}
-	log.Println("Successfully connected!")
+
 	return db
 }
 
