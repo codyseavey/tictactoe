@@ -20,7 +20,7 @@ build-no-cache: ## - Docker build with no-cache setting
 	@docker build --no-cache -t $(DOCKER_REPO) .
 
 .PHONY: run
-run: ## - Run the container that was built
+run: stop ## - Run the container that was built
 	@docker run --name $(APP_NAME)-db -e POSTGRES_USER=$(APP_NAME) -e POSTGRES_PASSWORD=$(APP_NAME) -e POSTGRES_DB=$(APP_NAME) -d postgres
 	@docker run --name $(APP_NAME) -d -p 443:8443 --link $(APP_NAME)-db:postgres -v $(PWD)/certs:/certs $(DOCKER_REPO):latest
 
