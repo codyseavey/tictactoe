@@ -4,7 +4,6 @@ RUN apk update && apk add --no-cache git ca-certificates tzdata && update-ca-cer
 RUN adduser -D -g '' tictactoe
 WORKDIR ${GOPATH}/src/github.com/codyseavey/tictactoe
 COPY . .
-RUN go get -d -v
 RUN chown -R tictactoe assets && chmod -R 777 assets
 RUN GOOS=linux GOARCH=386 go build -ldflags="-w -s" -o /go/bin/tictactoe
 

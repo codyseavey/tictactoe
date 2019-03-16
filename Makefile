@@ -36,10 +36,11 @@ run: stop pullcerts ## - Run the container that was built
 .PHONY: test
 test: pullcerts ## - Run tests for the application that was built
 	@docker pull postgres
-	@docker run --name $(APP_NAME)-test-db -e POSTGRES_USER=$(APP_NAME) -e POSTGRES_PASSWORD=$(APP_NAME) -e POSTGRES_DB=$(APP_NAME) -d postgres &> /dev/null
-	@sleep 3
-	@docker run --rm --link $(APP_NAME)-test-db:postgres -v $(GOPATH):/go -w /go/src/$(GIT_REPO) -e GOARCH=386 golang:alpine go test
 	@docker rm -f $(APP_NAME)-test-db &> /dev/null || true
+	@sleep 5
+	@docker run --name $(APP_NAME)-test-db -e POSTGRES_USER=$(APP_NAME) -e POSTGRES_PASSWORD=$(APP_NAME) -e POSTGRES_DB=$(APP_NAME) -d postgres &> /dev/null
+	@sleep 5
+	@docker run --rm --link $(APP_NAME)-test-db:postgres -e GO111MODULE=on -v $(PWD):/go/src/${PWD##*/} -w /go/src/${PWD##*/} -e GOARCH=386 golang:alpine go test -mod=vendor 
 
 .PHONY: stop
 stop: ## - Removes the container if it is running
