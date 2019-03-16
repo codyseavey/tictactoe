@@ -1,5 +1,5 @@
 pipeline {
-    agent { docker { image 'debian' } }
+    agent { docker { image 'belligerence/buildimage' } }
     stages {
         stage('build') {
             steps {
