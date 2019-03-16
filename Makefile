@@ -48,5 +48,5 @@ stop: ## - Removes the container if it is running
 
 .PHONY: publish
 publish: ## - Pushes the image to docker registry
-	@docker login -u $(credstash get dockerhub-user) -p $(credstash get dockerhub-pass)
+	@docker login -u `credstash get dockerhub-user` -p `credstash get dockerhub-pass`
 	@docker push $(DOCKER_REPO):$(GIT_COMMIT)
