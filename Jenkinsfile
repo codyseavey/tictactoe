@@ -1,9 +1,19 @@
 pipeline {
-    agent { docker { image 'golang' } }
+    agent any
     stages {
         stage('build') {
             steps {
-                sh 'go version'
+                sh 'make build'
+            }
+        }
+        stage('test') {
+            steps {
+                sh 'make test'
+            }
+        }
+        stage('publish') {
+            steps {
+               sh 'make publish'
             }
         }
     }

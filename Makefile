@@ -1,6 +1,7 @@
 DOCKER_REPO=belligerence/tictactoe
 APP_NAME=tictactoe
 GIT_REPO=github.com/codyseavey/tictactoe
+GIT_COMMIT=`git log --pretty=format:'%h' -n 1`
 
 .PHONY: help
 help: ## - Displays help message
@@ -21,16 +22,16 @@ pullcerts: ## - Pulls certs from credstash
 
 .PHONY: build
 build: ## - Docker build
-	@docker build -t $(DOCKER_REPO) .
+	@docker build -t $(DOCKER_REPO):$(GIT_COMMIT) .
 
 .PHONY: build-no-cache
 build-no-cache: ## - Docker build with no-cache setting
-	@docker build --no-cache -t $(DOCKER_REPO) .
+	@docker build --no-cache -t $(DOCKER_REPO):$(GIT_COMMIT) .
 
 .PHONY: run
 run: stop pullcerts ## - Run the container that was built
 	@docker run --name $(APP_NAME)-db -e POSTGRES_USER=$(APP_NAME) -e POSTGRES_PASSWORD=$(APP_NAME) -e POSTGRES_DB=$(APP_NAME) -d postgres
-	@docker run --name $(APP_NAME) -d -p 443:8443 --link $(APP_NAME)-db:postgres -v $(PWD)/certs:/certs $(DOCKER_REPO):latest
+	@docker run --name $(APP_NAME) -d -p 443:8443 --link $(APP_NAME)-db:postgres -v $(PWD)/certs:/certs $(DOCKER_REPO):$(GIT_COMMIT)
 
 .PHONY: test
 test: pullcerts ## - Run tests for the application that was built
@@ -44,4 +45,5 @@ stop: ## - Removes the container if it is running
 
 .PHONY: publish
 publish: ## - Pushes the image to docker registry
-	@docker push $(DOCKER_REPO):latest
+	@docker login -u $(credstash get dockerhub-user) -p $(credstash get dockerhub-pass)
+	@docker push $(DOCKER_REPO):$(GIT_COMMIT)
