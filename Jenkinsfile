@@ -1,5 +1,10 @@
 pipeline {
-    agent { docker { image 'belligerence/buildimage' } }
+    agent {
+        docker {
+            image 'belligerence/buildimage'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
     stages {
         stage('build') {
             steps {

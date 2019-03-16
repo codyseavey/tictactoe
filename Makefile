@@ -35,6 +35,7 @@ run: stop pullcerts ## - Run the container that was built
 
 .PHONY: test
 test: pullcerts ## - Run tests for the application that was built
+	@docker pull postgres
 	@docker run --name $(APP_NAME)-test-db -e POSTGRES_USER=$(APP_NAME) -e POSTGRES_PASSWORD=$(APP_NAME) -e POSTGRES_DB=$(APP_NAME) -d postgres &> /dev/null
 	@docker run --rm --link $(APP_NAME)-test-db:postgres -v $(GOPATH):/go -w /go/src/$(GIT_REPO) -e GOARCH=386 golang:alpine go test
 	@docker rm -f $(APP_NAME)-test-db &> /dev/null || true
