@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'belligerence/buildimage'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent "ec2"
     stages {
         stage('build') {
             steps {
