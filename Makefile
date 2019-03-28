@@ -30,8 +30,8 @@ build-no-cache: ## - Docker build with no-cache setting
 
 .PHONY: run
 run: stop pullcerts ## - Run the container that was built
-	@docker run --name $(APP_NAME)-db -e POSTGRES_USER=$(APP_NAME) -e POSTGRES_PASSWORD=$(APP_NAME) -e POSTGRES_DB=$(APP_NAME) -d postgres
-	@docker run --name $(APP_NAME) -d -p 443:8443 --link $(APP_NAME)-db:postgres -v $(PWD)/certs:/certs $(DOCKER_REPO):$(GIT_COMMIT)
+	@docker run --name $(APP_NAME)-db --restart=always -e POSTGRES_USER=$(APP_NAME) -e POSTGRES_PASSWORD=$(APP_NAME) -e POSTGRES_DB=$(APP_NAME) -d postgres
+	@docker run --name $(APP_NAME) --restart=always -d -p 443:8443 --link $(APP_NAME)-db:postgres -v $(PWD)/certs:/certs $(DOCKER_REPO):$(GIT_COMMIT)
 
 .PHONY: test
 test: pullcerts ## - Run tests for the application that was built
