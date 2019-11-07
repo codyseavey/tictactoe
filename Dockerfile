@@ -1,5 +1,7 @@
 FROM golang:alpine as builder
 ENV GOPATH /go
+ENV GOFLAGS '-mod=vendor'
+ENV GO111MODULE on
 RUN apk update && apk add --no-cache git ca-certificates tzdata && update-ca-certificates
 RUN adduser -D -g '' tictactoe
 WORKDIR ${GOPATH}/src/github.com/codyseavey/tictactoe
