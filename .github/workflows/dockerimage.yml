@@ -1,0 +1,25 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches:    
+    - 'master'
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag docker.pkg.github.com/codyseavey/tictactoe/web:$(date +%s)    - uses: actions/checkout@master
+    
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: docker.pkg.github.com/codyseavey/tictactoe/web:$(date +%s)
+        username: codyseavey
+        password: ${{ secrets.GITHUB_PUBLISH_TOKEN }}
