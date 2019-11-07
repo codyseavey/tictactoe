@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v1
     
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag docker.pkg.github.com/codyseavey/tictactoe/web:$(date +%s)    - uses: actions/checkout@master
+      run: docker build . --file Dockerfile --tag docker.pkg.github.com/codyseavey/tictactoe/web:$(date +%s)
     
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
