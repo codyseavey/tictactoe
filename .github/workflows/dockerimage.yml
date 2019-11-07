@@ -22,4 +22,4 @@ jobs:
       with:
         name: docker.pkg.github.com/codyseavey/tictactoe/web:$(date +%s)
         username: codyseavey
-        password: ${{ secrets.GITHUB_PUBLISH_TOKEN }}
+        password: ${{ secrets.GITHUB_PACKAGE_TOKEN }}
